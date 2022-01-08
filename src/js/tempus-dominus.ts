@@ -327,23 +327,27 @@ class TempusDominus {
       const components = config.display.components;
       config.hooks.inputFormat = (_, date: DateTime) => {
         if (!date) return '';
-        return date.format({
-          year: components.calendar && components.year ? 'numeric' : undefined,
-          month:
-            components.calendar && components.month ? '2-digit' : undefined,
-          day: components.calendar && components.date ? '2-digit' : undefined,
-          hour:
-            components.clock && components.hours
-              ? components.useTwentyfourHour
-                ? '2-digit'
-                : 'numeric'
-              : undefined,
-          minute:
-            components.clock && components.minutes ? '2-digit' : undefined,
-          second:
-            components.clock && components.seconds ? '2-digit' : undefined,
-          hour12: !components.useTwentyfourHour,
-        });
+        if(_._options.format) {
+          return date.formatWithTemplate(_._options.format);
+        }else {
+          return date.format({
+            year: components.calendar && components.year ? 'numeric' : undefined,
+            month:
+              components.calendar && components.month ? '2-digit' : undefined,
+            day: components.calendar && components.date ? '2-digit' : undefined,
+            hour:
+              components.clock && components.hours
+                ? components.useTwentyfourHour
+                  ? '2-digit'
+                  : 'numeric'
+                : undefined,
+            minute:
+              components.clock && components.minutes ? '2-digit' : undefined,
+            second:
+              components.clock && components.seconds ? '2-digit' : undefined,
+            hour12: !components.useTwentyfourHour,
+          });
+        }
       };
     }
 

@@ -1,4 +1,3 @@
-///<reference src="js/tempus-dominus"/>
 /*global $ */
 
 /*!
@@ -6,13 +5,14 @@
   * Copyright 2013-2021 [object Object]
   * Licensed under MIT (https://github.com/Eonasdan/tempus-dominus/blob/master/LICENSE)
   */
-tempusDominus.jQueryInterface = function (option, argument) {
-  if (this.length === 1) {
-    return tempusDominus.jQueryHandleThis(this, option, argument);
+tempusDominus.jQueryInterface = function (option, argument, _this = null) {
+  if(!_this) _this = this; 
+  if (_this.length === 1) {
+    return tempusDominus.jQueryHandleThis(_this, option, argument);
   }
-  // "this" is jquery here
-  return this.each(function () {
-    tempusDominus.jQueryHandleThis(this, option, argument);
+  // "_this" is jquery here
+  return _this.each(function () {
+    tempusDominus.jQueryHandleThis(_this, option, argument);
   });
 };
 
@@ -144,10 +144,28 @@ $(document)
       tempusDominus.jQueryInterface.call($target, 'show', event);
     }
   );
-const name = 'tempusDominus';
-$.fn[name] = tempusDominus.jQueryInterface;
-$.fn[name].Constructor = tempusDominus.TempusDominus;
-$.fn[name].noConflict = function () {
-  $.fn[name] = $.fn[name];
-  return tempusDominus.jQueryInterface;
+
+const name_datetimepicker = 'datetimepicker';
+$.fn[name_datetimepicker] = tempusDominus.jQueryInterface;
+$.fn[name_datetimepicker].Constructor = tempusDominus.TempusDominus;
+$.fn[name_datetimepicker].noConflict = function () {
+    $.fn[name_datetimepicker] = $.fn[name_datetimepicker];
+    return tempusDominus.jQueryInterface;
+};
+const name_datepicker = 'datepicker';
+$.fn[name_datepicker] = function (option, param) {
+    option = $.extend({
+        format: 'YYYY-MM-DD',
+        display: {
+            components: {
+                clock: false
+            }
+        },
+    }, option);
+    return tempusDominus.jQueryInterface(option, param, this);
+};
+$.fn[name_datetimepicker].Constructor = tempusDominus.TempusDominus
+$.fn[name_datetimepicker].noConflict = function () {
+    $.fn[name_datetimepicker] = $.fn[name_datetimepicker];
+    return tempusDominus.jQueryInterface;
 };

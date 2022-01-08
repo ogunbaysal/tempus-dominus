@@ -22,10 +22,6 @@ module.exports = {
     ignoreInitial: true,
   },
   server: "docs",
-  https: {
-    key: 'C:\\projects\\https\\localhost.key',
-    cert: 'C:\\projects\\https\\localhost.crt',
-  },
   proxy: false,
   port: 3001,
   middleware: false,

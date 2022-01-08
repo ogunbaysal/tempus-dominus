@@ -4,6 +4,7 @@ import { DefaultOptions } from './conts';
 import { TempusDominus } from './tempus-dominus';
 
 export default interface Options {
+  format?: string,
   restrictions?: {
     minDate?: DateTime;
     maxDate?: DateTime;
@@ -125,6 +126,12 @@ export class OptionConverter {
             providedType,
             'DateTime or Date'
           );
+        }
+        case 'format': {
+          if (value === undefined) {
+            return 'YYYY-MM-DD HH:mm:ss';
+          }
+          return value;
         }
         case 'viewDate': {
           const dateTime = this._dateConversion(value, 'viewDate');

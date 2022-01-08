@@ -1,6 +1,6 @@
 /*!
   * Tempus Dominus v6.0.0-alpha17 (https://getdatepicker.com/)
-  * Copyright 2013-2021 [object Object]
+  * Copyright 2013-2022 [object Object]
   * Licensed under MIT (https://github.com/Eonasdan/tempus-dominus/blob/master/LICENSE)
   */
 (function (global, factory) {
@@ -155,6 +155,45 @@
          */
         format(template, locale = this.locale) {
             return new Intl.DateTimeFormat(locale, template).format(this);
+        }
+        /**
+        * Returns a string format by gived template
+        * @param template A string. Uses ISO 8601.
+        */
+        formatWithTemplate(template) {
+            let val = {
+                D: this.getUTCDate(),
+                DD: null,
+                M: this.getUTCMonth(),
+                MM: null,
+                YY: this.getUTCFullYear().toString().substring(2),
+                YYYY: this.getUTCFullYear(),
+                H: this.getUTCHours(),
+                HH: null,
+                m: this.getUTCMinutes(),
+                mm: null,
+                s: this.getUTCSeconds(),
+                ss: null
+            };
+            val.DD = (val.D < 10 ? '0' : '') + val.D;
+            val.MM = (val.M < 10 ? '0' : '') + val.M;
+            val.HH = (val.H < 10 ? '0' : '') + val.H;
+            val.mm = (val.m < 10 ? '0' : '') + val.m;
+            val.ss = (val.s < 10 ? '0' : '') + val.s;
+            let validParts = /D?|DD?|M?|MM?|yy(?:yy)?|H?|HH?|m?|mm?|s?|ss?/g;
+            let separators = template.replace(validParts, '\0').split('\0');
+            let parts = template.match(validParts);
+            if (!separators || !separators.length || !parts || !parts.length) {
+                throw `DateTime format is not a valid format! ${template}`;
+            }
+            let res = [];
+            for (let i = 0; i < parts.length; i++) {
+                if (separators.length) {
+                    res.push(separators.shift());
+                }
+                res.push(val[parts[i]]);
+            }
+            return res.join('');
         }
         /**
          * Return true if {@link compare} is before this date
@@ -1409,6 +1448,12 @@
                             return dateTime;
                         }
                         Namespace.errorMessages.typeMismatch('defaultDate', providedType, 'DateTime or Date');
+                    }
+                    case 'format': {
+                        if (value === undefined) {
+                            return 'YYYY-MM-DD HH:mm:ss';
+                        }
+                        return value;
                     }
                     case 'viewDate': {
                         const dateTime = this._dateConversion(value, 'viewDate');
@@ -3337,19 +3382,24 @@
                 config.hooks.inputFormat = (_, date) => {
                     if (!date)
                         return '';
-                    return date.format({
-                        year: components.calendar && components.year ? 'numeric' : undefined,
-                        month: components.calendar && components.month ? '2-digit' : undefined,
-                        day: components.calendar && components.date ? '2-digit' : undefined,
-                        hour: components.clock && components.hours
-                            ? components.useTwentyfourHour
-                                ? '2-digit'
-                                : 'numeric'
-                            : undefined,
-                        minute: components.clock && components.minutes ? '2-digit' : undefined,
-                        second: components.clock && components.seconds ? '2-digit' : undefined,
-                        hour12: !components.useTwentyfourHour,
-                    });
+                    if (_._options.format) {
+                        return date.formatWithTemplate(_._options.format);
+                    }
+                    else {
+                        return date.format({
+                            year: components.calendar && components.year ? 'numeric' : undefined,
+                            month: components.calendar && components.month ? '2-digit' : undefined,
+                            day: components.calendar && components.date ? '2-digit' : undefined,
+                            hour: components.clock && components.hours
+                                ? components.useTwentyfourHour
+                                    ? '2-digit'
+                                    : 'numeric'
+                                : undefined,
+                            minute: components.clock && components.minutes ? '2-digit' : undefined,
+                            second: components.clock && components.seconds ? '2-digit' : undefined,
+                            hour12: !components.useTwentyfourHour,
+                        });
+                    }
                 };
             }
             if ((_a = this._display) === null || _a === void 0 ? void 0 : _a.isVisible) {
