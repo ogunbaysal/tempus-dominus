@@ -213,7 +213,10 @@ export default class Actions {
             'title',
             this._context._options.localization.selectTime
           );
-          currentTarget.innerHTML = this._context._display._iconTag(
+          const titleSpan = document.createElement('span');
+          titleSpan.style.marginRight = '5px';
+          titleSpan.innerHTML = this._context._options.localization.selectTime;
+          currentTarget.innerHTML = titleSpan.outerHTML + this._context._display._iconTag(
             this._context._options.display.icons.time
           ).outerHTML;
 
@@ -223,7 +226,10 @@ export default class Actions {
             'title',
             this._context._options.localization.selectDate
           );
-          currentTarget.innerHTML = this._context._display._iconTag(
+          const titleSpan = document.createElement('span');
+          titleSpan.style.marginRight = '5px';
+          titleSpan.innerHTML = this._context._options.localization.selectDate;
+          currentTarget.innerHTML = titleSpan.outerHTML + this._context._display._iconTag(
             this._context._options.display.icons.date
           ).outerHTML;
           if (this._context._display._hasTime) {

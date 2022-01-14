@@ -160,7 +160,7 @@ class DateTime extends Date {
         let val = {
             D: this.getUTCDate(),
             DD: null,
-            M: this.getUTCMonth(),
+            M: this.getUTCMonth() + 1,
             MM: null,
             YY: this.getUTCFullYear().toString().substring(2),
             YYYY: this.getUTCFullYear(),
@@ -176,7 +176,7 @@ class DateTime extends Date {
         val.HH = (val.H < 10 ? '0' : '') + val.H;
         val.mm = (val.m < 10 ? '0' : '') + val.m;
         val.ss = (val.s < 10 ? '0' : '') + val.s;
-        let validParts = /D?|DD?|M?|MM?|yy(?:yy)?|H?|HH?|m?|mm?|s?|ss?/g;
+        let validParts = /HH?|MM?|SS?|DD?|mm?|ss?|YY(?:YY)?/g;
         let separators = template.replace(validParts, '\0').split('\0');
         let parts = template.match(validParts);
         if (!separators || !separators.length || !parts || !parts.length) {
@@ -800,15 +800,15 @@ const DefaultOptions = {
     display: {
         icons: {
             type: 'icons',
-            time: 'fas fa-clock',
-            date: 'fas fa-calendar',
-            up: 'fas fa-arrow-up',
-            down: 'fas fa-arrow-down',
-            previous: 'fas fa-chevron-left',
-            next: 'fas fa-chevron-right',
-            today: 'fas fa-calendar-check',
-            clear: 'fas fa-trash',
-            close: 'fas fa-times',
+            time: 'feather icon-clock',
+            date: 'feather icon-calendar',
+            up: 'feather icon-chevron-up',
+            down: 'feather icon-chevron-down',
+            previous: 'feather icon-chevron-left',
+            next: 'feather icon-chevron-right',
+            today: 'feather icon-watch',
+            clear: 'feather icon-x',
+            close: 'feather icon-x'
         },
         sideBySide: false,
         calendarWeeks: false,
@@ -835,6 +835,7 @@ const DefaultOptions = {
         inline: false,
     },
     stepping: 1,
+    format: 'YYYY-MM-DD HH:mm',
     useCurrent: true,
     defaultDate: undefined,
     localization: {
@@ -1154,12 +1155,18 @@ class Actions {
                 if (currentTarget.getAttribute('title') ===
                     this._context._options.localization.selectDate) {
                     currentTarget.setAttribute('title', this._context._options.localization.selectTime);
-                    currentTarget.innerHTML = this._context._display._iconTag(this._context._options.display.icons.time).outerHTML;
+                    const titleSpan = document.createElement('span');
+                    titleSpan.style.marginRight = '5px';
+                    titleSpan.innerHTML = this._context._options.localization.selectTime;
+                    currentTarget.innerHTML = titleSpan.outerHTML + this._context._display._iconTag(this._context._options.display.icons.time).outerHTML;
                     this._context._display._updateCalendarHeader();
                 }
                 else {
                     currentTarget.setAttribute('title', this._context._options.localization.selectDate);
-                    currentTarget.innerHTML = this._context._display._iconTag(this._context._options.display.icons.date).outerHTML;
+                    const titleSpan = document.createElement('span');
+                    titleSpan.style.marginRight = '5px';
+                    titleSpan.innerHTML = this._context._options.localization.selectDate;
+                    currentTarget.innerHTML = titleSpan.outerHTML + this._context._display._iconTag(this._context._options.display.icons.date).outerHTML;
                     if (this._context._display._hasTime) {
                         this.do(e, ActionTypes.showClock);
                         this._context._display._update('clock');
@@ -1447,7 +1454,7 @@ class OptionConverter {
                 }
                 case 'format': {
                     if (value === undefined) {
-                        return 'YYYY-MM-DD HH:mm:ss';
+                        return 'YYYY-MM-DD HH:mm';
                     }
                     return value;
                 }
@@ -2893,6 +2900,10 @@ class Display {
             const div = document.createElement('div');
             div.setAttribute('data-action', ActionTypes.togglePicker);
             div.setAttribute('title', title);
+            const titleSpan = document.createElement('span');
+            titleSpan.innerHTML = title;
+            titleSpan.style.marginRight = '5px';
+            div.appendChild(titleSpan);
             div.appendChild(this._iconTag(icon));
             toolbar.push(div);
         }

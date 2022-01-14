@@ -537,7 +537,10 @@ export default class Display {
       const div = document.createElement('div');
       div.setAttribute('data-action', ActionTypes.togglePicker);
       div.setAttribute('title', title);
-
+      const titleSpan = document.createElement('span');
+      titleSpan.innerHTML = title;
+      titleSpan.style.marginRight = '5px';
+      div.appendChild(titleSpan);
       div.appendChild(this._iconTag(icon));
       toolbar.push(div);
     }

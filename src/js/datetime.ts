@@ -170,44 +170,40 @@ export class DateTime extends Date {
    * Returns a string format by gived template
    * @param template A string. Uses ISO 8601.
    */
-  formatWithTemplate(template: String) : string {
-      let val = {
-        D: this.getUTCDate(),
-        DD: null,
-        M: this.getUTCMonth(),
-        MM: null,
-        YY: this.getUTCFullYear().toString().substring(2),
-        YYYY: this.getUTCFullYear(),
-        H: this.getUTCHours(),
-        HH: null,
-        m: this.getUTCMinutes(),
-        mm: null,
-        s: this.getUTCSeconds(),        
-        ss: null
-      };
-      val.DD = (val.D < 10 ? '0' : '') + val.D;
-      val.MM= (val.M < 10 ? '0' : '') + val.M;
-      val.HH = (val.H < 10 ? '0' : '') + val.H;
-      val.mm = (val.m < 10 ? '0' : '') + val.m;
-      val.ss = (val.s < 10 ? '0' : '') + val.s;
-      
-      let validParts = /D?|DD?|M?|MM?|yy(?:yy)?|H?|HH?|m?|mm?|s?|ss?/g;
-      let separators = template.replace(validParts, '\0').split('\0');
-      let parts = template.match(validParts);
-
-      if(!separators || !separators.length || !parts || !parts.length) {
-        throw `DateTime format is not a valid format! ${template}`;
+  formatWithTemplate(template: string) {
+    let val = {
+      D: this.getUTCDate(),
+      DD: null,
+      M: this.getUTCMonth() + 1,
+      MM: null,
+      YY: this.getUTCFullYear().toString().substring(2),
+      YYYY: this.getUTCFullYear(),
+      H: this.getUTCHours(),
+      HH: null,
+      m: this.getUTCMinutes(),
+      mm: null,
+      s: this.getUTCSeconds(),
+      ss: null
+    };
+    val.DD = (val.D < 10 ? '0' : '') + val.D;
+    val.MM = (val.M < 10 ? '0' : '') + val.M;
+    val.HH = (val.H < 10 ? '0' : '') + val.H;
+    val.mm = (val.m < 10 ? '0' : '') + val.m;
+    val.ss = (val.s < 10 ? '0' : '') + val.s;
+    let validParts = /HH?|MM?|SS?|DD?|mm?|ss?|YY(?:YY)?/g;
+    let separators = template.replace(validParts, '\0').split('\0');
+    let parts = template.match(validParts);
+    if (!separators || !separators.length || !parts || !parts.length) {
+      throw `DateTime format is not a valid format! ${template}`;
+    }
+    let res = [];
+    for (let i = 0; i < parts.length; i++) {
+      if (separators.length) {
+        res.push(separators.shift());
       }
-
-      let res = [];
-      for(let i = 0; i < parts.length; i++) {
-        if(separators.length) {
-          res.push(separators.shift());
-        }
-        res.push(val[parts[i]]);
-      }
-
-      return res.join('');
+      res.push(val[parts[i]]);
+    }
+    return res.join('');
   }
 
   /**

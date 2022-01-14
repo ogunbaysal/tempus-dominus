@@ -129,7 +129,7 @@ export class OptionConverter {
         }
         case 'format': {
           if (value === undefined) {
-            return 'YYYY-MM-DD HH:mm:ss';
+            return 'YYYY-MM-DD HH:mm';
           }
           return value;
         }
